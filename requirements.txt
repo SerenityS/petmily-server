@@ -1,0 +1,7 @@
+aiomysql
+fastapi
+fastapi-users[sqlalchemy]
+uvicorn[standard]
+aiosqlite
+python-dotenv
+PyMySQL
