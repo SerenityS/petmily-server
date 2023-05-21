@@ -2,8 +2,9 @@ from typing import AsyncGenerator
 
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
+from sqlalchemy import String
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from config.db_config import host, id, port, pw, table_name
 
@@ -15,6 +16,7 @@ class Base(DeclarativeBase):
 
 
 class User(SQLAlchemyBaseUserTableUUID, Base):
+    nick: Mapped[str] = mapped_column(String(length=50), unique=True, nullable=False)
     pass
 
 
