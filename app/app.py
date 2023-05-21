@@ -4,6 +4,7 @@ from app.db import User, create_db_and_tables
 from app.schemas import UserCreate, UserRead, UserUpdate
 from app.users import auth_backend, current_active_user, fastapi_users
 from router.device_routers import get_device_router
+from router.work_routers import get_work_router
 
 app = FastAPI()
 
@@ -34,6 +35,11 @@ app.include_router(
     get_device_router(),
     prefix="/device",
     tags=["device"],
+)
+app.include_router(
+    get_work_router(),
+    prefix="/work",
+    tags=["work"],
 )
 
 
