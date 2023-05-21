@@ -68,6 +68,6 @@ def get_device_router() -> APIRouter:
             await session.execute(q)
             await session.commit()
 
-        return {"Device deleted"}
+        return {"message": "Device deleted"}
 
     return router
