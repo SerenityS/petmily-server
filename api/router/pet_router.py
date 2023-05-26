@@ -123,6 +123,8 @@ def get_pet_router() -> APIRouter:
             await session.execute(q)
             await session.commit()
 
+        return {"message": "Pet Updated"}
+
     @router.delete(
         "",
         name="pet: Delete Pet",
