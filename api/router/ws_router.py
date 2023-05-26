@@ -1,10 +1,15 @@
-from typing import Optional
-
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
-
 from app.db import User
 from app.users import current_active_user
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    WebSocket,
+    WebSocketDisconnect,
+    status,
+)
+from fastapi.responses import HTMLResponse
+from model.command import Command
 
 html = """
 <!DOCTYPE html>
@@ -55,10 +60,13 @@ class ConnectionManager:
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
 
-    async def send_command(self, chip_id: int, command: str):
+    async def send_command(self, chip_id: str, command: str):
         for connection in self.active_connections:
-            if int(connection.path_params["chip_id"]) == chip_id:
+            print(connection.path_params["chip_id"])
+            if connection.path_params["chip_id"] == chip_id:
                 await connection.send_text(command)
+                return True
+            return False
 
     async def broadcast(self, message: str):
         for connection in self.active_connections:
@@ -80,27 +88,30 @@ def get_ws_router() -> APIRouter:
         "/{chip_id}",
         name="ws: Connect WebSocket",
     )
-    async def websocket_endpoint(websocket: WebSocket, chip_id: int):
+    async def websocket_endpoint(websocket: WebSocket, chip_id: str):
         await manager.connect(websocket)
         try:
             while True:
                 data = await websocket.receive_text()
-                await manager.send_command(chip_id, f"You wrote: {data}")
-                await manager.broadcast(f"Device #{chip_id} says: {data}")
+                pass
         except WebSocketDisconnect:
             manager.disconnect(websocket)
-            await manager.broadcast(f"Device #{chip_id} left the chat")
+            print(f"ws: {chip_id} disconnected")
 
     @router.post(
         "/command",
         name="ws: Send Command to Device",
     )
     async def send_cmd(
-        user: User = Depends(current_active_user),
-        chip_id: Optional[int] = None,
-        command: Optional[str] = None,
+        user: User = Depends(current_active_user), command: Command = None
     ):
-        await manager.send_command(chip_id, command)
-        return {"message": f"Command sent to {chip_id}"}
+        result = await manager.send_command(command.chip_id, command.command)
+        if result:
+            return {"message": f"Command sent to {command.chip_id}"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Device not found",
+            )
 
     return router
