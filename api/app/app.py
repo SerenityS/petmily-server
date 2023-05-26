@@ -2,6 +2,7 @@ from app.db import User, create_db_and_tables
 from app.schemas import UserCreate, UserRead, UserUpdate
 from app.users import auth_backend, current_active_user, fastapi_users
 from fastapi import Depends, FastAPI
+from router.history_router import get_history_router
 from router.pet_router import get_pet_router
 from router.ws_router import get_ws_router
 
@@ -29,6 +30,11 @@ app.include_router(
     fastapi_users.get_users_router(UserRead, UserUpdate),
     prefix="/users",
     tags=["users"],
+)
+app.include_router(
+    get_history_router(),
+    prefix="/history",
+    tags=["history"],
 )
 app.include_router(
     get_pet_router(),
