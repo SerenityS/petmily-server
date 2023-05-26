@@ -3,7 +3,7 @@ from fastapi import Depends, FastAPI
 from app.db import User, create_db_and_tables
 from app.schemas import UserCreate, UserRead, UserUpdate
 from app.users import auth_backend, current_active_user, fastapi_users
-from router.device_routers import get_device_router
+from router.pet_router import get_pet_router
 from router.ws_router import get_ws_router
 
 app = FastAPI()
@@ -32,9 +32,9 @@ app.include_router(
     tags=["users"],
 )
 app.include_router(
-    get_device_router(),
-    prefix="/device",
-    tags=["device"],
+    get_pet_router(),
+    prefix="/pet",
+    tags=["pet"],
 )
 app.include_router(
     get_ws_router(),
