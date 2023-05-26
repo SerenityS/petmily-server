@@ -35,7 +35,7 @@ def get_pet_router() -> APIRouter:
                         detail="Pet already registered",
                     )
 
-            session.add(PetDB(pet.dict()))
+            session.add(PetDB(**pet.dict()))
             await session.commit()
 
         return {"message": "Pet Registered"}
@@ -88,6 +88,8 @@ def get_pet_router() -> APIRouter:
                         is_male=row.is_male,
                         age=row.age,
                         weight=row.weight,
+                        pet_type=row.pet_type,
+                        feed_kcal=row.feed_kcal,
                         image_url=row.image_url,
                     )
                 )

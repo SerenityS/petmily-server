@@ -2,7 +2,7 @@ from typing import Optional
 
 from app.db import Base
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 
@@ -18,6 +18,8 @@ class PetDB(Base):
     is_male: Mapped[bool] = mapped_column(Integer, index=False, nullable=False)
     age: Mapped[int] = mapped_column(Integer, index=False, nullable=False)
     weight: Mapped[float] = mapped_column(Integer, index=False, nullable=False)
+    pet_type: Mapped[int] = mapped_column(Integer, index=False, nullable=False)
+    feed_kcal: Mapped[float] = mapped_column(Float, index=False, nullable=False)
     image_url: Mapped[Optional[str]] = mapped_column(
         String(length=500), index=False, nullable=True
     )
@@ -30,4 +32,6 @@ class Pet(BaseModel):
     is_male: bool
     age: int
     weight: float
+    pet_type: int
+    feed_kcal: float
     image_url: Optional[str]
