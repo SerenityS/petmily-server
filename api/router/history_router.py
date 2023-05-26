@@ -2,7 +2,7 @@ from typing import Optional
 
 from app.db import User, async_session_maker
 from app.users import current_active_user
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from model.history import History, HistoryDB
 from sqlalchemy import delete
 from sqlalchemy.future import select

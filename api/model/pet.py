@@ -2,7 +2,7 @@ from typing import Optional
 
 from app.db import Base
 from pydantic import BaseModel
-from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy import Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 
