@@ -117,7 +117,7 @@ def get_pet_router() -> APIRouter:
         async with async_session_maker() as session:
             q = (
                 update(PetDB)
-                .where(PetDB.user_id == str(user.id) and PetDB.chip_id == pet.chip_id)
+                .where(PetDB.chip_id == pet.chip_id and PetDB.user_id == str(user.id))
                 .values(pet.dict())
             )
             await session.execute(q)
@@ -135,7 +135,7 @@ def get_pet_router() -> APIRouter:
     ):
         async with async_session_maker() as session:
             q = delete(PetDB).where(
-                PetDB.user_id == str(user.id) and PetDB.chip_id == chip_id
+                PetDB.chip_id == chip_id and PetDB.user_id == str(user.id)
             )
             await session.execute(q)
             await session.commit()

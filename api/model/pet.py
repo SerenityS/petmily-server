@@ -9,10 +9,9 @@ from sqlalchemy.orm import Mapped, mapped_column
 class PetDB(Base):
     __tablename__ = "pet"
 
-    id: Mapped[int] = Column(Integer, primary_key=True, unique=True, autoincrement=True)
     user_id: Mapped[str] = mapped_column(String(length=100), index=True, nullable=False)
     chip_id: Mapped[str] = mapped_column(
-        String(length=100), unique=True, index=False, nullable=False
+        String(length=100), primary_key=True, unique=True, index=False, nullable=False
     )
     name: Mapped[str] = mapped_column(String(length=100), index=False, nullable=False)
     is_male: Mapped[bool] = mapped_column(Integer, index=False, nullable=False)

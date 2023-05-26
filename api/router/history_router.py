@@ -60,7 +60,7 @@ def get_history_router() -> APIRouter:
     ):
         async with async_session_maker() as session:
             q = delete(HistoryDB).where(
-                HistoryDB.user_id == str(user.id) and HistoryDB.chip_id == chip_id
+                HistoryDB.chip_id == chip_id and HistoryDB.user_id == str(user.id)
             )
             await session.execute(q)
             await session.commit()
