@@ -13,12 +13,12 @@ from sqlalchemy.future import select
 UPLOAD_DIR = "static/images"
 
 
-def get_pet_router() -> APIRouter:
+def get_petmily_router() -> APIRouter:
     router = APIRouter()
 
     @router.post(
         "",
-        name="pet: Register Pet",
+        name="petmily: Register Pet",
     )
     async def register_pet(
         user: User = Depends(current_active_user),
@@ -42,12 +42,12 @@ def get_pet_router() -> APIRouter:
 
     @router.post(
         "/image",
-        name="pet: Upload Pet Image",
+        name="petmily: Upload Pet Image",
     )
     async def upload_pet_image(
         user: User = Depends(current_active_user),
         file: UploadFile = File(...),
-        pet: Pet = None,
+        chip_id: str = None,
     ):
         image = await file.read()
         image_prefix = file.filename.split(".")[-1]
@@ -59,7 +59,7 @@ def get_pet_router() -> APIRouter:
         async with async_session_maker() as session:
             q = (
                 update(PetDB)
-                .where(PetDB.user_id == str(user.id) and PetDB.chip_id == pet.chip_id)
+                .where(PetDB.user_id == str(user.id) and PetDB.chip_id == chip_id)
                 .values(image_url=image_url)
             )
             await session.execute(q)
@@ -69,7 +69,7 @@ def get_pet_router() -> APIRouter:
 
     @router.get(
         "",
-        name="pet: Get Pet List",
+        name="petmily: Get Pet List",
     )
     async def get_pet(
         user: User = Depends(current_active_user),
@@ -98,17 +98,16 @@ def get_pet_router() -> APIRouter:
 
     @router.get(
         "/image",
-        name="pet: Get Pet Image",
+        name="petmily: Get Pet Image",
     )
     async def get_pet_image(
-        user: User = Depends(current_active_user),
         file_name: str = None,
     ):
         return FileResponse(os.path.join(UPLOAD_DIR, file_name))
 
     @router.patch(
         "",
-        name="pet: Update Pet",
+        name="petmily: Update Pet",
     )
     async def update_pet(
         user: User = Depends(current_active_user),
@@ -127,7 +126,7 @@ def get_pet_router() -> APIRouter:
 
     @router.delete(
         "",
-        name="pet: Delete Pet",
+        name="petmily: Delete Pet",
     )
     async def delete_pet(
         user: User = Depends(current_active_user),

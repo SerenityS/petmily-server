@@ -3,7 +3,7 @@ from app.schemas import UserCreate, UserRead, UserUpdate
 from app.users import auth_backend, current_active_user, fastapi_users
 from fastapi import Depends, FastAPI
 from router.history_router import get_history_router
-from router.pet_router import get_pet_router
+from router.petmily_router import get_petmily_router
 from router.ws_router import get_ws_router
 
 app = FastAPI()
@@ -37,9 +37,9 @@ app.include_router(
     tags=["history"],
 )
 app.include_router(
-    get_pet_router(),
-    prefix="/pet",
-    tags=["pet"],
+    get_petmily_router(),
+    prefix="/petmily",
+    tags=["petmily"],
 )
 app.include_router(
     get_ws_router(),
