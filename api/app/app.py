@@ -1,8 +1,7 @@
-from fastapi import Depends, FastAPI
-
 from app.db import User, create_db_and_tables
 from app.schemas import UserCreate, UserRead, UserUpdate
 from app.users import auth_backend, current_active_user, fastapi_users
+from fastapi import Depends, FastAPI
 from router.pet_router import get_pet_router
 from router.ws_router import get_ws_router
 
