@@ -3,6 +3,7 @@ from app.schemas import UserCreate, UserRead, UserUpdate
 from app.users import auth_backend, current_active_user, fastapi_users
 from fastapi import Depends, FastAPI
 from router.history_router import get_history_router
+from router.petmily_image_router import get_petmily_image_router
 from router.petmily_router import get_petmily_router
 from router.ws_router import get_ws_router
 
@@ -38,6 +39,11 @@ app.include_router(
 )
 app.include_router(
     get_petmily_router(),
+    prefix="/petmily",
+    tags=["petmily"],
+)
+app.include_router(
+    get_petmily_image_router(),
     prefix="/petmily",
     tags=["petmily"],
 )
