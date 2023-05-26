@@ -1,3 +1,5 @@
+import json
+
 from app.db import User
 from app.users import current_active_user
 from fastapi import (
@@ -60,11 +62,10 @@ class ConnectionManager:
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
 
-    async def send_command(self, chip_id: str, command: str):
+    async def send_command(self, command: Command):
         for connection in self.active_connections:
-            print(connection.path_params["chip_id"])
-            if connection.path_params["chip_id"] == chip_id:
-                await connection.send_text(command)
+            if connection.path_params["chip_id"] == command.chip_id:
+                await connection.send_text(json.dumps(command.dict()))
                 return True
             return False
 
@@ -105,7 +106,7 @@ def get_ws_router() -> APIRouter:
     async def send_cmd(
         user: User = Depends(current_active_user), command: Command = None
     ):
-        result = await manager.send_command(command.chip_id, command.command)
+        result = await manager.send_command(command)
         if result:
             return {"message": f"Command sent to {command.chip_id}"}
         else:
