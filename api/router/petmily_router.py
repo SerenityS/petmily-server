@@ -54,7 +54,7 @@ def get_petmily_router() -> APIRouter:
                         chip_id=row.chip_id,
                         name=row.name,
                         is_male=row.is_male,
-                        age=row.age,
+                        birth=row.birth,
                         weight=row.weight,
                         pet_type=row.pet_type,
                         feed_kcal=row.feed_kcal,

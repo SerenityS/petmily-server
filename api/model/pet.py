@@ -1,8 +1,9 @@
+from datetime import datetime
 from typing import Optional
 
 from app.db import Base
 from pydantic import BaseModel
-from sqlalchemy import Float, Integer, String
+from sqlalchemy import DateTime, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 
@@ -15,7 +16,7 @@ class PetDB(Base):
     )
     name: Mapped[str] = mapped_column(String(length=100), index=False, nullable=False)
     is_male: Mapped[bool] = mapped_column(Integer, index=False, nullable=False)
-    age: Mapped[int] = mapped_column(Integer, index=False, nullable=False)
+    birth: Mapped[DateTime] = mapped_column(DateTime(timezone=True))
     weight: Mapped[float] = mapped_column(Integer, index=False, nullable=False)
     pet_type: Mapped[int] = mapped_column(Integer, index=False, nullable=False)
     feed_kcal: Mapped[float] = mapped_column(Float, index=False, nullable=False)
@@ -29,7 +30,7 @@ class Pet(BaseModel):
     chip_id: str
     name: str
     is_male: bool
-    age: int
+    birth: datetime
     weight: float
     pet_type: int
     feed_kcal: float
