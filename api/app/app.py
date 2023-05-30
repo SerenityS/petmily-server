@@ -6,6 +6,7 @@ from router.history_router import get_history_router
 from router.petmily_device_data_router import get_petmily_deivce_data_router
 from router.petmily_image_router import get_petmily_image_router
 from router.petmily_router import get_petmily_router
+from router.schedule_router import get_schedule_data_router
 from router.ws_router import get_ws_router
 
 app = FastAPI()
@@ -52,6 +53,11 @@ app.include_router(
     get_petmily_image_router(),
     prefix="/petmily",
     tags=["petmily"],
+)
+app.include_router(
+    get_schedule_data_router(),
+    prefix="/schedule",
+    tags=["schedule"],
 )
 app.include_router(
     get_ws_router(),
