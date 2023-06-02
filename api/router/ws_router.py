@@ -1,6 +1,6 @@
 import json
 
-from app.db import User
+from app.db import User, async_session_maker
 from app.users import current_active_user
 from fastapi import (
     APIRouter,
@@ -12,6 +12,9 @@ from fastapi import (
 )
 from fastapi.responses import HTMLResponse
 from model.command import Command
+from model.device_data import DeviceData, DeviceDataDB
+from sqlalchemy import update
+from sqlalchemy.future import select
 
 html = """
 <!DOCTYPE html>
@@ -49,6 +52,23 @@ html = """
     </body>
 </html>
 """
+
+
+async def send_device_data(device_data: DeviceData):
+    async with async_session_maker() as session:
+        q = select(DeviceDataDB).where(DeviceDataDB.chip_id == device_data.chip_id)
+        result = await session.execute(q)
+
+        if result.scalars().first() is None:
+            session.add(DeviceDataDB(**device_data.dict()))
+        else:
+            q = (
+                update(DeviceDataDB)
+                .where(DeviceDataDB.chip_id == device_data.chip_id)
+                .values(device_data.dict())
+            )
+            await session.execute(q)
+        await session.commit()
 
 
 class ConnectionManager:
@@ -94,7 +114,21 @@ def get_ws_router() -> APIRouter:
         try:
             while True:
                 data = await websocket.receive_text()
-                pass
+                json_data = json.loads(data)
+
+                if json_data["cmd"]:
+                    await send_device_data(
+                        DeviceData(
+                            chip_id=json_data["chip_id"],
+                            bowl_amount=json_data["bowl_amount"],
+                            feed_box_amount=json_data["feed_box_amount"],
+                        )
+                    )
+                    print(
+                        f"INFO:\t\tws: {chip_id} sent DeviceData",
+                        flush=True,
+                    )
+
         except WebSocketDisconnect:
             manager.disconnect(websocket)
             print(f"ws: {chip_id} disconnected", flush=True)
