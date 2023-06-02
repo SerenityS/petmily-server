@@ -3,7 +3,9 @@ import json
 from app.db import User, async_session_maker
 from app.users import current_active_user
 from fastapi import APIRouter, Depends
+from model.command import Command
 from model.schedule import Schedule, ScheduleDB
+from router.ws_router import ConnectionManager
 from sqlalchemy import update
 from sqlalchemy.future import select
 
@@ -33,6 +35,10 @@ def get_schedule_data_router() -> APIRouter:
                 )
                 await session.execute(q)
             await session.commit()
+
+        await ConnectionManager().send_command(
+            Command(chip_id=schedule.chip_id, command="schedule")
+        )
 
         return {"message": "Schedule Registered"}
 
