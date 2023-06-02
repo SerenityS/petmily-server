@@ -6,4 +6,5 @@ from pydantic import BaseModel
 class Command(BaseModel):
     chip_id: str
     command: str
-    amount: Optional[int]
+    feed_amount: Optional[str]
+    schedule_json: Optional[str]
