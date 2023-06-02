@@ -47,7 +47,6 @@ def get_schedule_data_router() -> APIRouter:
         name="schedule: Get Schedule",
     )
     async def get_schedule_data(
-        user: User = Depends(current_active_user),
         chip_id: str = None,
     ):
         async with async_session_maker() as session:
