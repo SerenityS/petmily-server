@@ -97,7 +97,7 @@ def get_ws_router() -> APIRouter:
                 pass
         except WebSocketDisconnect:
             manager.disconnect(websocket)
-            print(f"ws: {chip_id} disconnected")
+            print(f"ws: {chip_id} disconnected", flush=True)
 
     @router.post(
         "/command",
