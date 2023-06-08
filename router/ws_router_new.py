@@ -1,8 +1,17 @@
 import json
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    WebSocket,
+    WebSocketDisconnect,
+    status,
+)
 from fastapi.responses import HTMLResponse
 
+from app.db import User
+from app.users import current_active_user
 from model.command import Command
 
 html = """
@@ -54,6 +63,13 @@ class ConnectionManager:
     def disconnect(self, websocket: WebSocket):
         self.active_connections.remove(websocket)
 
+    async def send_command(self, command: Command):
+        for connection in self.active_connections:
+            if connection.path_params["chip_id"] == command.chip_id:
+                await connection.send_text(json.dumps(command.dict()))
+                return True
+            return False
+
     async def broadcast(self, message: str):
         for connection in self.active_connections:
             await connection.send_text(message)
@@ -83,5 +99,21 @@ def get_ws_router() -> APIRouter:
         except WebSocketDisconnect:
             manager.disconnect(websocket)
             print(f"ws: {chip_id} disconnected", flush=True)
+
+    @router.post(
+        "/command",
+        name="ws: Send Command to Device",
+    )
+    async def send_cmd(
+        user: User = Depends(current_active_user), command: Command = None
+    ):
+        result = await manager.send_command(command)
+        if result:
+            return {"message": f"Command sent to {command.chip_id}"}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Device not found",
+            )
 
     return router
