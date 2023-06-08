@@ -58,4 +58,4 @@ jobs:
       - name: Docker run
         run: |
           docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
-          docker run -d -p 10114:8000 --name petmily-api --restart always -e TZ=Asia/Seoul ${{ env.DOCKER_IMAGE }}:latest
+          docker run -d -p 10114:8000 --name petmily_api --restart always -e TZ=Asia/Seoul ${{ env.DOCKER_IMAGE }}:latest
